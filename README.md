@@ -2,29 +2,14 @@
 Script to fetch an MFA token for you to use temporary aws access credentials
 
 I got this somewhere on github and made some changes to it to require 
-less parameters and remember my MFA ARN.  I copy this script with those 
-hardcoded values set for each profile I need to run against and then just run:
- 
- mfa-account1.sh
- mfa-account2.sh 
-
-Be sure to update the following variables to match your AWS settings.
-
-AWS_CLI_PROFILE="default"
-ARN_OF_MFA="arn:aws:iam::12345:mfa/user"
+less parameters and remember my MFA ARN.  
 
 The profile name should be the name of the profile stanza in your 
 ~/.aws/credentials file as used by the aws-cli.
 
 The ARN should be the ARN of your MFA device as specified in the AWS console.
 
-Note:
-
-Scripts run in a subprocess of the calling shell.  This means that 
-if you attempt to set the env vars in the script, they will only persist
-inside that subprocess.  You can set an alias function to be run by your
-shell that will source the env vars into your main shell whenever you 
-run the mfa command alias.
+The MFA code is the code your MFA device gives you.
 
 Please see the mfa-install.sh file for an example of this alias function.
 
@@ -42,5 +27,9 @@ be the ARN of the MFA to use for that profile.
 At a command prompt run the dollowing command.
 ```mfa <mfacode> <optional-aws-profile>```
  
-
-
+## Alias Note:
+Scripts run in a subprocess of the calling shell.  This means that 
+if you attempt to set the env vars in the script, they will only persist
+inside that subprocess.  You can set an alias function to be run by your
+shell that will source the env vars into your main shell whenever you 
+run the mfa command alias.
