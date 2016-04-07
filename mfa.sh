@@ -21,25 +21,26 @@ else
   echo "Using AWS CLI found at $AWS_CLI"
 fi
 
-#if [ $# -ne 3 ]; then
-#  echo "Usage: $0 <AWS_CLI_PROFILE> <ARN_OF_MFA> <MFA_TOKEN_CODE>"
-#  echo "Where:"
-#  echo "   <AWS_CLI_PROFILE> = aws-cli profile usually in $HOME/.aws/config"
-#  echo "   <ARN_OF_MFA> = ARN of the virtual MFA assigned to IAM user (arn:aws:iam::012345678901:mfa/user)"
-#  echo "   <MFA_TOKEN_CODE> = Code from virtual MFA device"
-#  exit 2
-#fi
-
-if [ $# -ne 1 ]; then
-  echo "Usage: $0 <MFA_TOKEN_CODE>"
+# 1 or 2 args ok
+if [[ $# -ne 1 && $# -ne 2 ]]; then
+  echo "Usage: $0 <MFA_TOKEN_CODE> <AWS_CLI_PROFILE>"
   echo "Where:"
   echo "   <MFA_TOKEN_CODE> = Code from virtual MFA device"
+  echo "   <AWS_CLI_PROFILE> = aws-cli profile usually in $HOME/.aws/config"
   exit 2
 fi
 
-AWS_CLI_PROFILE="default"
-ARN_OF_MFA="arn:aws:iam::12345:mfa/user"
+echo "Reading config..."
+if [ -r ./mfa.cfg ]; then
+  . ./mfa.cfg
+else
+  echo "No config found.  Please create your mfa.cfg.  See README.txt for more info."
+  exit 2
+fi
+
+AWS_CLI_PROFILE=${2:-"default"}
 MFA_TOKEN_CODE=$1
+ARN_OF_MFA=${!AWS_CLI_PROFILE}
 
 echo "AWS-CLI Profile: $AWS_CLI_PROFILE"
 echo "MFA ARN: $ARN_OF_MFA"
@@ -49,4 +50,3 @@ echo "Copy and paste the following into your shell:"
 aws --profile $AWS_CLI_PROFILE sts get-session-token --duration 129600 \
   --serial-number $ARN_OF_MFA --token-code $MFA_TOKEN_CODE --output text \
   | awk '{printf("export AWS_ACCESS_KEY_ID=\"%s\"\nexport AWS_SECRET_ACCESS_KEY=\"%s\"\nexport AWS_SESSION_TOKEN=\"%s\"\nexport AWS_SECURITY_TOKEN=\"%s\"\n",$2,$4,$5,$5)}' | tee ~/.token_file
-source ~/.token_file
