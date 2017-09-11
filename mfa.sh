@@ -31,8 +31,8 @@ if [[ $# -ne 1 && $# -ne 2 ]]; then
 fi
 
 echo "Reading config..."
-if [ -r ./mfa.cfg ]; then
-  . ./mfa.cfg
+if [ -r ~/aws-mfa-script/mfa.cfg ]; then
+  . ~/aws-mfa-script/mfa.cfg
 else
   echo "No config found.  Please create your mfa.cfg.  See README.txt for more info."
   exit 2
