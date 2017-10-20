@@ -13,11 +13,13 @@ less parameters and remember my MFA ARN.
   - Please see the mfa-install.sh file for an example of this alias function.
   * You will need to make a copy of the SAMPLE-mfa.cfg file named mfa.cfg. This file will need a variable defined for each aws cli profile you wish to use. The variable name should be the profile name and the value should be the ARN of the MFA to use for that profile. 
 
+Also install jq and make sure it's globally accessible. this version is dash friendly. IE if you have account names like company-dev
+
 # Installation
  1. git clone repo to ~/
  2. add the following line into your '~/.bash_profile' source ./aws-mfa-script/alias.sh
- 3. fille your credentials in mfa.cfg.
- 
+ 3. fille your credentials in mfa.json.
+
 # Running the script
 At a command prompt run the dollowing command.
-```mfa <mfacode> <optional-aws-profile>```
+```mfa <optional-aws-profile> <mfacode>```

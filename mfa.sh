@@ -23,7 +23,7 @@ fi
 
 # 1 or 2 args ok
 if [[ $# -ne 1 && $# -ne 2 ]]; then
-  echo "Usage: $0 <MFA_TOKEN_CODE> <AWS_CLI_PROFILE>"
+  echo "Usage: $0 <AWS_CLI_PROFILE> <MFA_TOKEN_CODE>"
   echo "Where:"
   echo "   <MFA_TOKEN_CODE> = Code from virtual MFA device"
   echo "   <AWS_CLI_PROFILE> = aws-cli profile usually in $HOME/.aws/config"
@@ -38,8 +38,8 @@ else
   exit 2
 fi
 
-AWS_CLI_PROFILE=${2:-default}
-MFA_TOKEN_CODE=$1
+AWS_CLI_PROFILE=${1:-default}
+MFA_TOKEN_CODE=$2
 
 echo "AWS-CLI Profile: $AWS_CLI_PROFILE"
 echo "MFA ARN: $ARN_OF_MFA"
