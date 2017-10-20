@@ -32,7 +32,7 @@ fi
 
 echo "Reading config..."
 if [ -r ~/aws-mfa-script/mfa.cfg ]; then
-  . ~/aws-mfa-script/mfa.cfg
+  ARN_OF_MFA=`jq -r --arg PROFILE $AWS_CLI_PROFILE '.[$PROFILE]' ~/aws-mfa-script/mfa.json`
 else
   echo "No config found.  Please create your mfa.cfg.  See README.txt for more info."
   exit 2
@@ -40,7 +40,6 @@ fi
 
 AWS_CLI_PROFILE=${2:-default}
 MFA_TOKEN_CODE=$1
-ARN_OF_MFA=${!AWS_CLI_PROFILE}
 
 echo "AWS-CLI Profile: $AWS_CLI_PROFILE"
 echo "MFA ARN: $ARN_OF_MFA"
