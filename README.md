@@ -27,6 +27,5 @@ mfa <mfacode> <optional-aws-profile>
 ## Alias Note:
 Scripts run in a subprocess of the calling shell.  This means that 
 if you attempt to set the env vars in the script, they will only persist
-inside that subprocess.  You can set an alias function to be run by your
-shell that will source the env vars into your main shell whenever you 
-run the mfa command alias.
+inside that subprocess.  The `alias.sh` script sets an alias function to source the env vars into your main shell whenever you 
+run the `mfa` command.
