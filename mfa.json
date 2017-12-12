@@ -1,0 +1,4 @@
+{
+	"default": "arn:aws:iam::123456789123456789:mfa/user1",
+	"company-dev": "arn:aws:iam::123456789123456789:mfa/user1"
+}
