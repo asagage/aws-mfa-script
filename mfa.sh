@@ -31,14 +31,14 @@ if [[ $# -ne 1 && $# -ne 2 ]]; then
 fi
 
 echo "Reading config..."
-if [ ! -r ~/mfa.cfg ]; then
+if [ ! -r ~/.mfa.cfg ]; then
   echo "No config found.  Please create your mfa.cfg.  See README.txt for more info."
   exit 2
 fi
 
 AWS_CLI_PROFILE=${2:-default}
 MFA_TOKEN_CODE=$1
-ARN_OF_MFA=$(grep "^$AWS_CLI_PROFILE" ~/mfa.cfg | cut -d '=' -f2- | tr -d '"')
+ARN_OF_MFA=$(grep "^$AWS_CLI_PROFILE" ~/.mfa.cfg | cut -d '=' -f2- | tr -d '"')
 
 echo "AWS-CLI Profile: $AWS_CLI_PROFILE"
 echo "MFA ARN: $ARN_OF_MFA"
