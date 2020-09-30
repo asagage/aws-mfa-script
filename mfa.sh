@@ -1,4 +1,5 @@
 #!/bin/bash
+# set -x
 #
 # Sample for getting temp session token from AWS STS
 #
@@ -21,14 +22,17 @@ else
   echo "Using AWS CLI found at $AWS_CLI"
 fi
 
-# 1 or 2 args ok
-if [[ $# -ne 1 && $# -ne 2 ]]; then
-  echo "Usage: $0 <MFA_TOKEN_CODE> <AWS_CLI_PROFILE>"
-  echo "Where:"
-  echo "   <MFA_TOKEN_CODE> = Code from virtual MFA device"
-  echo "   <AWS_CLI_PROFILE> = aws-cli profile usually in $HOME/.aws/config"
-  exit 2
-fi
+# Helper
+while getopts ":h" option; do
+    case $option in
+        h) # display Help
+            echo "Usage: $0 <AWS_CLI_PROFILE> <TOKEN_DURATION>"
+            echo "Where:"
+            echo "   <AWS_CLI_PROFILE>(Optional) = aws-cli profile usually in $HOME/.aws/config"
+            echo "   <TOKEN_DURATION>(Optional) = Token code duration time (default 129600)"
+            exit;;
+        esac
+done
 
 echo "Reading config..."
 if [ ! -r ~/mfa.cfg ]; then
@@ -36,8 +40,10 @@ if [ ! -r ~/mfa.cfg ]; then
   exit 2
 fi
 
-AWS_CLI_PROFILE=${2:-default}
-MFA_TOKEN_CODE=$1
+echo -n "Enter your MFA Token: " >&2
+read -s MFA_TOKEN_CODE
+AWS_CLI_PROFILE=${1:-default}
+DURATION=${2:-129600}
 ARN_OF_MFA=$(grep "^$AWS_CLI_PROFILE" ~/mfa.cfg | cut -d '=' -f2- | tr -d '"')
 
 echo "AWS-CLI Profile: $AWS_CLI_PROFILE"
@@ -45,6 +51,6 @@ echo "MFA ARN: $ARN_OF_MFA"
 echo "MFA Token Code: $MFA_TOKEN_CODE"
 
 echo "Your Temporary Creds:"
-aws --profile $AWS_CLI_PROFILE sts get-session-token --duration 129600 \
+aws --profile $AWS_CLI_PROFILE sts get-session-token --duration $DURATION \
   --serial-number $ARN_OF_MFA --token-code $MFA_TOKEN_CODE --output text \
   | awk '{printf("export AWS_ACCESS_KEY_ID=\"%s\"\nexport AWS_SECRET_ACCESS_KEY=\"%s\"\nexport AWS_SESSION_TOKEN=\"%s\"\nexport AWS_SECURITY_TOKEN=\"%s\"\n",$2,$4,$5,$5)}' | tee ~/.token_file
