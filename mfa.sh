@@ -30,9 +30,10 @@ if [[ $# -ne 1 && $# -ne 2 ]]; then
   exit 2
 fi
 
-MFA_CONFIG=$(echo $(dirname "$0")/mfa.cfg)
+SCRIPT_PATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P  )"
+MFA_CONFIG=$(echo "$SCRIPT_PATH/mfa.cfg")
 echo "Reading config..."
-if [ ! -r $MFA_CONFIG]; then
+if [ ! -r $MFA_CONFIG ]; then
   echo "No config found.  Please create your mfa.cfg.  See README.txt for more info."
   exit 2
 fi
