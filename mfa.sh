@@ -40,7 +40,7 @@ fi
 
 AWS_CLI_PROFILE=${2:-default}
 MFA_TOKEN_CODE=$1
-ARN_OF_MFA=$(grep "^$AWS_CLI_PROFILE" $MFA_CONFIG | cut -d '=' -f2- | tr -d '"')
+ARN_OF_MFA=$(grep "^$AWS_CLI_PROFILE=" $MFA_CONFIG | cut -d '=' -f2- | tr -d '"')
 
 echo "AWS-CLI Profile: $AWS_CLI_PROFILE"
 echo "MFA ARN: $ARN_OF_MFA"
