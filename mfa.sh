@@ -22,8 +22,8 @@ else
 fi
 
 # 1 or 2 args ok
-if [[ $# -ne 1 && $# -ne 2 ]]; then
-  echo "Usage: $0 <MFA_TOKEN_CODE> <AWS_CLI_PROFILE>"
+if [[ $# -ne 1 && $# -ne 2 && $# -ne 3 ]]; then
+  echo "Usage: $0 <MFA_TOKEN_CODE> <AWS_CLI_PROFILE> <TOKEN_FILE_LOCATION>"
   echo "Where:"
   echo "   <MFA_TOKEN_CODE> = Code from virtual MFA device"
   echo "   <AWS_CLI_PROFILE> = aws-cli profile usually in $HOME/.aws/config"
@@ -38,8 +38,11 @@ if [ ! -r $MFA_CONFIG ]; then
   exit 2
 fi
 
-AWS_CLI_PROFILE=${2:-default}
 MFA_TOKEN_CODE=$1
+AWS_CLI_PROFILE=${2:-default}
+mkdir -p $HOME/.mfa/creds
+TOKEN_FILE=${3:-$HOME/.mfa/creds/${AWS_CLI_PROFILE}_token_file}
+echo "Writing token file to $TOKEN_FILE"
 ARN_OF_MFA=$(grep "^$AWS_CLI_PROFILE" $MFA_CONFIG | cut -d '=' -f2- | tr -d '"')
 
 echo "AWS-CLI Profile: $AWS_CLI_PROFILE"
@@ -49,4 +52,4 @@ echo "MFA Token Code: $MFA_TOKEN_CODE"
 echo "Your Temporary Creds:"
 aws --profile $AWS_CLI_PROFILE sts get-session-token --duration 129600 \
   --serial-number $ARN_OF_MFA --token-code $MFA_TOKEN_CODE --output text \
-  | awk '{printf("export AWS_ACCESS_KEY_ID=\"%s\"\nexport AWS_SECRET_ACCESS_KEY=\"%s\"\nexport AWS_SESSION_TOKEN=\"%s\"\nexport AWS_SECURITY_TOKEN=\"%s\"\n",$2,$4,$5,$5)}' | tee $HOME/.token_file
+  | awk '{printf("export AWS_ACCESS_KEY_ID=\"%s\"\nexport AWS_SECRET_ACCESS_KEY=\"%s\"\nexport AWS_SESSION_TOKEN=\"%s\"\nexport AWS_SECURITY_TOKEN=\"%s\"\n",$2,$4,$5,$5)}' | tee $TOKEN_FILE
